@@ -31,6 +31,8 @@ public:
     QPushButton *Set;
     QPushButton *Begin;
     QLabel *show_area;
+    QLabel *if_face;
+    QPushButton *Stop;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -44,17 +46,23 @@ public:
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         Set = new QPushButton(centralWidget);
         Set->setObjectName(QStringLiteral("Set"));
-        Set->setGeometry(QRect(460, 20, 80, 23));
+        Set->setGeometry(QRect(449, 20, 91, 23));
         Begin = new QPushButton(centralWidget);
         Begin->setObjectName(QStringLiteral("Begin"));
-        Begin->setGeometry(QRect(460, 60, 80, 23));
+        Begin->setGeometry(QRect(449, 60, 91, 23));
         show_area = new QLabel(centralWidget);
         show_area->setObjectName(QStringLiteral("show_area"));
-        show_area->setGeometry(QRect(40, 20, 400, 400));
+        show_area->setGeometry(QRect(50, 30, 350, 350));
+        if_face = new QLabel(centralWidget);
+        if_face->setObjectName(QStringLiteral("if_face"));
+        if_face->setGeometry(QRect(450, 160, 81, 81));
+        Stop = new QPushButton(centralWidget);
+        Stop->setObjectName(QStringLiteral("Stop"));
+        Stop->setGeometry(QRect(450, 100, 91, 23));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 550, 21));
+        menuBar->setGeometry(QRect(0, 0, 550, 28));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -74,6 +82,8 @@ public:
         Set->setText(QApplication::translate("MainWindow", "Set", 0));
         Begin->setText(QApplication::translate("MainWindow", "Begin", 0));
         show_area->setText(QString());
+        if_face->setText(QApplication::translate("MainWindow", "TextLabel", 0));
+        Stop->setText(QApplication::translate("MainWindow", "Stop", 0));
     } // retranslateUi
 
 };
