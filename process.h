@@ -41,7 +41,6 @@ namespace manipulate
     const float factor = 3.0f;
     const float exaggeration = 2.0f;
 
-
     class Process
     {
     protected:

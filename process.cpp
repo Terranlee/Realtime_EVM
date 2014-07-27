@@ -106,9 +106,8 @@ void manipulate::Process::area_of_interest(IplImage* input, cv::Mat& ROI)
                 area_ROI.y = temp.y;
             detectAns = true;
             cvRectangle(input , cvPoint(area_ROI.x , area_ROI.y) , cvPoint(area_ROI.x+area_ROI.width ,\
-                                                area_ROI.y+area_ROI.height) , colors[6] , FACE_LINE_WIDTH);
-        }
-        
+			         	area_ROI.y+area_ROI.height) , colors[6] , FACE_LINE_WIDTH);
+        }        
     }
     cv::Mat all = cv::Mat(input , 0);
     ROI = all(area_ROI);
