@@ -16,15 +16,18 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     videothread.cpp \
     process.cpp \
-    magnify.cpp
+    magnify.cpp \
+    paramcontroler.cpp
 
 HEADERS  += mainwindow.h \
     videothread.h \
     process.h \
     magnify.h \
-    error.h
+    error.h \
+    paramcontroler.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    paramcontroler.ui
 
 INCLUDEPATH += /usr/local/include \
                 /usr/local/include/opencv \
