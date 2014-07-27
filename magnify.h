@@ -12,8 +12,6 @@
 
 namespace manipulate
 {
-    enum temporal_method { IIR , IDEAL , BUTTER };
-
     using std::vector;
 
     //const related to the frequency of heart beat
@@ -46,8 +44,8 @@ namespace manipulate
 
     public:
         IIRTemporal(float l = heart_low, float h = heart_high , int pl = defaultPyramidLevel ) : Temporal(l , h , pl) { lowpass1.clear() , lowpass2.clear(); curLevel = 0; }
-        void first_frame(const vector<cv::Mat>&);
-        void temporal_filtering(const cv::Mat& , cv::Mat&);
+        virtual void first_frame(const vector<cv::Mat>&);
+        virtual void temporal_filtering(const cv::Mat& , cv::Mat&);
     };
 
     class IdealTemporal : public Temporal
@@ -61,8 +59,8 @@ namespace manipulate
     public:
         IdealTemporal(float l = heart_low , float h = heart_high , int pl = defaultPyramidLevel) : Temporal(l , h , pl) {}
         void set_ratio(float r) { ratio = r; }
-        void first_frame(const vector<cv::Mat>&);
-        void temporal_filtering(const cv::Mat& , cv::Mat&);
+        virtual void first_frame(const vector<cv::Mat>&);
+        virtual void temporal_filtering(const cv::Mat& , cv::Mat&);
     };
 
 }

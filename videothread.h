@@ -21,7 +21,7 @@ namespace material
     using std::vector;
     using manipulate::videoHeight;
     using manipulate::videoWidth;
-    
+
     class VideoThread : public QThread
     {
         Q_OBJECT
@@ -44,7 +44,8 @@ namespace material
 
     public:
         explicit VideoThread(int frequency , QObject* parent = 0);
-
+        ~VideoThread();
+        
         void set_time_slice(int frequency){
             time_slice = static_cast<int>(1000 / frequency);
         }

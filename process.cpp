@@ -15,7 +15,12 @@ manipulate::Process::Process(int f)
     cascade = (CvHaarClassifierCascade*)cvLoad(cascadeName,0,0,0);          //initialize the cascade
     storage = cvCreateMemStorage(0);
 
-    magnifyMethod = new IIRTemporal(0.4f , 2.0f , pyramidLevel);
+    area_ROI.width = ROIWidth;
+    area_ROI.height = ROIHeight;
+    area_ROI.x = videoWidth / 2 - ROIWidth / 2;
+    area_ROI.y = videoHeight / 2 - ROIHeight / 2;
+
+    magnifyMethod = new IIRTemporal(0.8f , 1.2f , pyramidLevel);
     set_parameters();
 }
 
@@ -23,7 +28,7 @@ void manipulate::Process::calculate_other_param()
 {
 	//calculate lambda
 	delta = lambdaC / 8.0 / (1.0 + alpha);
-	lambda = sqrt(videoHeight * videoHeight + videoWidth * videoWidth) / factor;
+	lambda = sqrt(ROIHeight * ROIHeight + ROIWidth * ROIWidth) / factor;
 }
 
 void manipulate::Process::set_parameters(float a , float lc)
@@ -75,10 +80,7 @@ void manipulate::Process::area_of_interest(IplImage* input, cv::Mat& ROI)
 {
     //set area of interest
     //cv::Mat doesn't provide setROI , so we have to copy that to a new cv::Mat
-    static int counter = 0;
-    static CvRect area_ROI;
-    area_ROI.width = ROIWidth;
-    area_ROI.height = ROIHeight;
+    static int counter = 0;    
     static bool detectAns;
 
     if(counter == 0)
@@ -95,6 +97,7 @@ void manipulate::Process::area_of_interest(IplImage* input, cv::Mat& ROI)
         else                            //face detected , ROI is in the face area
         {
             CvRect temp = (*(CvRect*)cvGetSeqElem(faces , number));
+
             if(temp.x + ROIWidth >= videoWidth)
                 area_ROI.x = videoWidth - ROIWidth - FACE_LINE_WIDTH;
             else
@@ -104,6 +107,7 @@ void manipulate::Process::area_of_interest(IplImage* input, cv::Mat& ROI)
                 area_ROI.y = videoHeight - ROIHeight - FACE_LINE_WIDTH;
             else
                 area_ROI.y = temp.y;
+
             detectAns = true;
             cvRectangle(input , cvPoint(area_ROI.x , area_ROI.y) , cvPoint(area_ROI.x+area_ROI.width ,\
 			         	area_ROI.y+area_ROI.height) , colors[6] , FACE_LINE_WIDTH);
@@ -115,6 +119,15 @@ void manipulate::Process::area_of_interest(IplImage* input, cv::Mat& ROI)
     counter++;
     if(counter == face_frequency)
         counter = 0;
+}
+
+void manipulate::Process::fill_in_area(IplImage* input , const cv::Mat& answer)
+{
+	cvSetImageROI(input , area_ROI);
+	cvZero(input);
+	IplImage imageHead = IplImage(answer);
+	cvAdd(input , &imageHead , input);
+	cvResetImageROI(input);
 }
 
 //unique functions for MotionProcess
@@ -139,10 +152,11 @@ void manipulate::MotionProcess::process_video(cv::Mat& input , cv::Mat& output)
     //else , use temporal_filter  and amplify
     else
     {
+        output = input.clone();
         for(int i=0; i<pyramidLevel; i++)
             magnifyMethod->temporal_filtering(pyramid.at(i) , filtered.at(i));
 
-        lambda = sqrt(videoHeight * videoHeight + videoWidth * videoWidth) / factor;
+        lambda = sqrt(ROIHeight * ROIHeight + ROIWidth * ROIWidth) / factor;
         for(int i=pyramidLevel; i>=0; i--)
         {
         	amplify(filtered.at(i) , filtered.at(i));

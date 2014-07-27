@@ -17,8 +17,6 @@
 namespace manipulate
 {
     //different kind of amplify and spacial filter
-    enum kind{ MOTION , COLOR };
-    enum spacial{ LAPLACIAN , GAUSSIAN };
 
     using std::vector;
 
@@ -40,6 +38,7 @@ namespace manipulate
     const float lambdaCConst = 40.0f;
     const float factor = 3.0f;
     const float exaggeration = 2.0f;
+    const float attenuationConst = 0.1;
 
     class Process
     {
@@ -53,6 +52,7 @@ namespace manipulate
     	//virables about processing
         int face_frequency;                      //how frequency do we need a face detect
         int pyramidLevel;                        //the highest level of pyramid
+        CvRect area_ROI;
         manipulate::Temporal* magnifyMethod;    //the temporal filter method and amplify
 
         void calculate_other_param();
@@ -62,16 +62,14 @@ namespace manipulate
     public:
         Process(int f = 10);
 
+        //set functions
         void set_parameters(float a = alphaConst, float lc = lambdaCConst);
+        void set_face_frequency(int f){ face_frequency = f; }
+        void set_pyramid_level(int l){ pyramidLevel = l; }
 
-        void set_face_frequency(int f){          //set functions
-            face_frequency = f;
-        }
-        void set_pyramid_level(int l){
-            pyramidLevel = l;
-        }
-
+        //preprocess and functions
         void area_of_interest(IplImage* , cv::Mat&);      //choose the area of interest , like cvSetROI
+        void fill_in_area(IplImage* , const cv::Mat&);
 
         //virtual functions , different kind of amplify need different process
         virtual void build_pyramid(const cv::Mat& , vector<cv::Mat>& ) = 0;
@@ -92,13 +90,13 @@ namespace manipulate
     	void reconstruction(const vector<cv::Mat> &, cv::Mat &);
 
     public:
-        MotionProcess(int f = 10) : Process(f) { pyramid.clear() , filtered.clear(); chromAttenuation = 0.1; }
+        MotionProcess(int f = 10) : Process(f) { pyramid.clear() , filtered.clear(); chromAttenuation = attenuationConst; }
         void set_chromAtt(float ch) { chromAttenuation = ch; }
 
         //for motion magnification , use laplacian_pyramid
-        void build_pyramid(const cv::Mat& , vector<cv::Mat>& );
-        void process_video(cv::Mat& , cv::Mat&);
-        void amplify(const cv::Mat& , cv::Mat&);
+        virtual void build_pyramid(const cv::Mat& , vector<cv::Mat>& );
+        virtual void process_video(cv::Mat& , cv::Mat&);
+        virtual void amplify(const cv::Mat& , cv::Mat&);
     };
 
 
@@ -111,9 +109,9 @@ namespace manipulate
         ColorProcess(int f = 10) : Process(f) {}
 
         //for color magnification , use gaussian_pyramid
-        void build_pyramid(const cv::Mat& , vector<cv::Mat>& );
-        void process_video(cv::Mat& , cv::Mat&);
-        void amplify(const cv::Mat& , cv::Mat&);
+        virtual void build_pyramid(const cv::Mat& , vector<cv::Mat>& );
+        virtual void process_video(cv::Mat& , cv::Mat&);
+        virtual void amplify(const cv::Mat& , cv::Mat&);
     };
 }
 
