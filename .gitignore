@@ -1,0 +1,8 @@
+#files that are ignored by git
+#mostly they are object files and executable files
+#also the moc files for qt
+
+moc_*.cpp
+*.o
+EVM_CPP
+
