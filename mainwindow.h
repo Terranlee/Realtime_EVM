@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "videothread.h"
+#include "paramcontroler.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,11 +19,14 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
     material::VideoThread* source;
+    ParamControler* controler;
 
 private slots:
     void print();
     void begin_main();
+    void stop_main();
 };
 
 #endif // MAINWINDOW_H

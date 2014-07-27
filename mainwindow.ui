@@ -17,9 +17,9 @@
    <widget class="QPushButton" name="Set">
     <property name="geometry">
      <rect>
-      <x>460</x>
+      <x>449</x>
       <y>20</y>
-      <width>80</width>
+      <width>91</width>
       <height>23</height>
      </rect>
     </property>
@@ -30,9 +30,9 @@
    <widget class="QPushButton" name="Begin">
     <property name="geometry">
      <rect>
-      <x>460</x>
+      <x>449</x>
       <y>60</y>
-      <width>80</width>
+      <width>91</width>
       <height>23</height>
      </rect>
     </property>
@@ -43,14 +43,40 @@
    <widget class="QLabel" name="show_area">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>20</y>
-      <width>400</width>
-      <height>400</height>
+      <x>50</x>
+      <y>30</y>
+      <width>350</width>
+      <height>350</height>
      </rect>
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="if_face">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>160</y>
+      <width>81</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Stop">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>100</y>
+      <width>91</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Stop</string>
     </property>
    </widget>
   </widget>
@@ -60,7 +86,7 @@
      <x>0</x>
      <y>0</y>
      <width>550</width>
-     <height>21</height>
+     <height>28</height>
     </rect>
    </property>
   </widget>
