@@ -8,16 +8,17 @@ namespace error
 {
     class MessageError
 	{
-    private:
+    protected:
         QString message;
     public:
         MessageError(QString m) : message(m) {}
-        QString print() { return message; }
+        virtual QString print() { return message; }
 	};
 
-    struct NoFaceError
+    struct NoFaceError : public MessageError
     {
-
+    public:
+        NoFaceError(QString m = "No Face Detected") : MessageError(m) {}
     };
 
     //errors related to numbers
@@ -37,7 +38,7 @@ namespace error
     public:
         NegativeError(QString w , float a) : NumberError(w , a) {}
         virtual QString print_message(){
-            return QString("number ") + QString("%1").arg(args) + QString("of ") + which + QString("is negative");
+            return QString("number ") + QString("%1").arg(args) + QString(" of ") + which + QString(" is negative");
         }
     };
 
@@ -47,7 +48,7 @@ namespace error
     public:
         TooLargeError(QString w , float a) : NumberError(w , a) {}
         virtual QString print_message(){
-            return QString("number ") + QString("%1").arg(args) + QString("of ") + which + QString("is too large");
+            return QString("number ") + QString("%1").arg(args) + QString(" of ") + which + QString(" is too large");
         }
     };
 
@@ -57,7 +58,7 @@ namespace error
     public:
         TooSmallError(QString w , float a) : NumberError(w , a) {}
         virtual QString print_message(){
-            return QString("number ") + QString("%1").arg(args) + QString("of ") + which + QString("is too small");
+            return QString("number ") + QString("%1").arg(args) + QString(" of ") + which + QString(" is too small");
         }
     };
 }

@@ -13,9 +13,9 @@ class ParamControler;
 const int argNum = 5;
 const QString argName[argNum] = {"alpha" , "lambdaC" , "freqLow" , "freqHigh" , "attenuation"};
 
-enum kind{ MOTION , COLOR };
-enum spacial{ LAPLACIAN , GAUSSIAN };
-enum temporal_method { IIR , IDEAL , BUTTER };
+enum Kind{ MOTION , COLOR };
+enum Spacial{ LAPLACIAN , GAUSSIAN };
+enum Temporal{ IIR , IDEAL , BUTTER };
 
 class ParamControler : public QWidget
 {
@@ -27,6 +27,7 @@ public:
     
 signals:
     void new_notice(QString);
+    void all_set(float[] , Kind , Temporal);
 
 private slots:
     void check_param();
@@ -40,6 +41,10 @@ private:
     //parameters used for the video magnify
     //alpha , lambdaC , freqLow , freqHigh , attenuation
     float parameters[argNum];
+    Kind ampKind;
+    Temporal ampTemporal;
+
+    void set_parameters();
 };
 
 #endif // PARAMCONTROLER_H
