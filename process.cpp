@@ -152,7 +152,7 @@ void manipulate::MotionProcess::process_video(cv::Mat& input , cv::Mat& output)
     //else , use temporal_filter  and amplify
     else
     {
-        output = input.clone();
+        output = input.clone();                       //if this is necessary? the reconstruction has changed it
         for(int i=0; i<pyramidLevel; i++)
             magnifyMethod->temporal_filtering(pyramid.at(i) , filtered.at(i));
 
@@ -234,30 +234,65 @@ void manipulate::MotionProcess::reconstruction(const vector<cv::Mat>& lPyramid ,
 //unique functions for ColorProcess
 void manipulate::ColorProcess::process_video(cv::Mat & input , cv::Mat& output)
 {
+    bool ifFirst = false;
+    if(pyramid.size() == 0)
+        ifFirst = true;
+    input.convertTo(input , CV_32FC3 , 1.0f/255.0f);         //change of the data_type
 
+    build_pyramid(input , pyramid);
+
+    if(ifFirst)
+    {
+        filtered = pyramid;
+        magnifyMethod->first_frame(pyramid);
+        output = input.clone();
+    }
+    else
+    {
+        output = input.clone();               //if this is necessary?
+        magnifyMethod->temporal_filtering(pyramid.at(1) , filtered.at(1));
+        amplify(filtered.at(1) , filtered.at(1));
+        reconstruction(filtered , output);
+        output += input;
+    }
+    output.convertTo(output , CV_8UC3 , 255.0 , 1.0 / 255.0);
 }
 
 void manipulate::ColorProcess::amplify(const cv::Mat& input , cv::Mat& output)
 {
-
+    output = input * alpha;
 }
 
 void manipulate::ColorProcess::build_pyramid(const cv::Mat& input , vector<cv::Mat>& gPyramid)
 {
-    //use gaussian pyramid during motion process
+    //use gaussian pyramid during color process
+    //the pyramid only consists of two level of image
     gPyramid.clear();
-    cv::Mat source , quarter;
+    cv::Mat source = input;
+    cv::Mat quarter;
     for(int i=0; i<pyramidLevel; i++)
     {
         cv::pyrDown(source , quarter);
-        gPyramid.push_back(quarter);
         source = quarter;
     }
     gPyramid.push_back(source);
+    gPyramid.push_back(input);
 }
 
 void manipulate::ColorProcess::reconstruction(const vector<cv::Mat>& gPyramid , cv::Mat& output)
 {
     //reconstruct the picture from Gaussian pyramid
-
+    cv::Mat quarter = gPyramid.at(1);
+    cv::Mat fourfold;
+    CvSize fourSize = gPyramid.at(1).size();
+    fourSize.height *= 2;
+    fourSize.width *= 2;
+    for(int i=0; i<pyramidLevel; i++)
+    {
+        cv::pyrUp(quarter , fourfold , fourSize);
+        quarter = fourfold;
+        fourSize.height *= 2;
+        fourSize.width *= 2;
+    }
+    output = fourfold.clone();
 }

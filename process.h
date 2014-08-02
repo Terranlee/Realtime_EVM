@@ -55,9 +55,15 @@ namespace manipulate
         CvRect area_ROI;
         manipulate::Temporal* magnifyMethod;    //the temporal filter method and amplify
 
+        //functions about the program
         void calculate_other_param();
         void face_detect(const IplImage*);       //face detect function and set the ROI
         int get_max();                           //get the max size face in the picture
+
+        //protected virtual functions , different kind of amplify need different process
+        virtual void build_pyramid(const cv::Mat& , vector<cv::Mat>& ) = 0;
+        virtual void amplify(const cv::Mat& , cv::Mat&) = 0;
+        virtual void reconstruction(const vector<cv::Mat>& , cv::Mat&) = 0;
 
     public:
         Process(int f = 10);
@@ -71,10 +77,8 @@ namespace manipulate
         void area_of_interest(IplImage* , cv::Mat&);      //choose the area of interest , like cvSetROI
         void fill_in_area(IplImage* , const cv::Mat&);
 
-        //virtual functions , different kind of amplify need different process
-        virtual void build_pyramid(const cv::Mat& , vector<cv::Mat>& ) = 0;
+        //public virtual functions
         virtual void process_video(cv::Mat& , cv::Mat&) = 0;
-        virtual void amplify(const cv::Mat& , cv::Mat&) = 0;
     };
 
 
@@ -87,31 +91,37 @@ namespace manipulate
 
     protected:
     	void attenuation(cv::Mat& , cv::Mat&);
-    	void reconstruction(const vector<cv::Mat> &, cv::Mat &);
+
+        //virtual functions inherited from Process
+        virtual void build_pyramid(const cv::Mat& , vector<cv::Mat>& );
+        virtual void reconstruction(const vector<cv::Mat> &, cv::Mat &);
+        virtual void amplify(const cv::Mat& , cv::Mat&);
 
     public:
         MotionProcess(int f = 10) : Process(f) { pyramid.clear() , filtered.clear(); chromAttenuation = attenuationConst; }
         void set_chromAtt(float ch) { chromAttenuation = ch; }
 
         //for motion magnification , use laplacian_pyramid
-        virtual void build_pyramid(const cv::Mat& , vector<cv::Mat>& );
         virtual void process_video(cv::Mat& , cv::Mat&);
-        virtual void amplify(const cv::Mat& , cv::Mat&);
     };
 
 
     class ColorProcess : public Process
     {
-    protected:
-    	void reconstruction(const vector<cv::Mat> &, cv::Mat &);
+    private:
+        vector<cv::Mat> pyramid;
+        vector<cv::Mat> filtered;
 
+    protected:
+        //virtual functions inherited from Process
+        virtual void build_pyramid(const cv::Mat& , vector<cv::Mat>& );
+        virtual void reconstruction(const vector<cv::Mat> &, cv::Mat &);
+        virtual void amplify(const cv::Mat& , cv::Mat&);
     public:
-        ColorProcess(int f = 10) : Process(f) {}
+        ColorProcess(int f = 10) : Process(f) { pyramid.clear() , filtered.clear(); }
 
         //for color magnification , use gaussian_pyramid
-        virtual void build_pyramid(const cv::Mat& , vector<cv::Mat>& );
         virtual void process_video(cv::Mat& , cv::Mat&);
-        virtual void amplify(const cv::Mat& , cv::Mat&);
     };
 }
 

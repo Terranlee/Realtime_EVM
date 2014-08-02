@@ -6,6 +6,7 @@ void manipulate::IIRTemporal::first_frame(const vector<cv::Mat>& input)
 {
 	lowpass1 = input;
 	lowpass2 = input;
+    pyramidLevel = input.size() - 1;
 }
 
 //temporal filtering using IIR
