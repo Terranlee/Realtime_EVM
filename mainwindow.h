@@ -27,6 +27,7 @@ private slots:
     void print();
     void begin_main();
     void stop_main();
+    void set_parameter(float[],Kind,Temporal);
 };
 
 #endif // MAINWINDOW_H

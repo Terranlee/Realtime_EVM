@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     source = new material::VideoThread(33);
     controler = new ParamControler;
+    ui->if_face->setWordWrap(true);
 
     //paint update of the image
     QObject::connect(source , SIGNAL(frame_change()), this , SLOT(print()));
@@ -18,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //set the details of videothread
     QObject::connect(ui->Set , SIGNAL(clicked()) , controler , SLOT(show()));
-
+    QObject::connect(controler , SIGNAL(all_set(float[],Kind,Temporal)) , this , SLOT(set_parameter(float[],Kind,Temporal)));
 }
 
 MainWindow::~MainWindow()
@@ -34,6 +35,11 @@ void MainWindow::begin_main()
 void MainWindow::stop_main()
 {
     source->exit();
+}
+
+void MainWindow::set_parameter(float param[] , Kind ampKind , Temporal ampTemporal)
+{
+
 }
 
 void MainWindow::print()
