@@ -23,7 +23,6 @@ material::VideoThread::~VideoThread()
 
 void material::VideoThread::run()
 {
-    
     while(true)
     {
         double t = (double) cvGetTickCount();               //face detection and get time
@@ -42,4 +41,3 @@ void material::VideoThread::run()
         //std::cout<<counter++<<std::endl;
     }
 }
-

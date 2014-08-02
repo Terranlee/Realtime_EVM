@@ -46,9 +46,7 @@ namespace material
         explicit VideoThread(int frequency , QObject* parent = 0);
         ~VideoThread();
         
-        void set_time_slice(int frequency){
-            time_slice = static_cast<int>(1000 / frequency);
-        }
+        void set_time_slice(int frequency){  time_slice = static_cast<int>(1000 / frequency);  }
         IplImage* acquire_access(){ return realImage; }         //access to the IplImage
 
     signals:
