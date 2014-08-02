@@ -20,7 +20,7 @@ manipulate::Process::Process(int f)
     area_ROI.x = videoWidth / 2 - ROIWidth / 2;
     area_ROI.y = videoHeight / 2 - ROIHeight / 2;
 
-    magnifyMethod = new IIRTemporal(0.8f , 1.2f , pyramidLevel);
+    magnifyMethod = new IIRTemporal(0.8f , 1.0f , pyramidLevel);
     set_parameters();
 }
 
@@ -91,8 +91,8 @@ void manipulate::Process::area_of_interest(IplImage* input, cv::Mat& ROI)
         {
             area_ROI = cvRect(videoWidth/2 - ROIWidth/2 , videoHeight/2 - ROIHeight/2 , ROIWidth , ROIHeight);
             detectAns = false;
-            cvRectangle(input , cvPoint(area_ROI.x , area_ROI.y) , cvPoint(area_ROI.x+area_ROI.width ,\
-                                                area_ROI.y+area_ROI.height) , colors[0] , FACE_LINE_WIDTH);
+          //  cvRectangle(input , cvPoint(area_ROI.x , area_ROI.y) , cvPoint(area_ROI.x+area_ROI.width ,\
+            //                                    area_ROI.y+area_ROI.height) , colors[0] , FACE_LINE_WIDTH);
         }
         else                            //face detected , ROI is in the face area
         {
@@ -109,8 +109,8 @@ void manipulate::Process::area_of_interest(IplImage* input, cv::Mat& ROI)
                 area_ROI.y = temp.y;
 
             detectAns = true;
-            cvRectangle(input , cvPoint(area_ROI.x , area_ROI.y) , cvPoint(area_ROI.x+area_ROI.width ,\
-			         	area_ROI.y+area_ROI.height) , colors[6] , FACE_LINE_WIDTH);
+     //       cvRectangle(input , cvPoint(area_ROI.x , area_ROI.y) , cvPoint(area_ROI.x+area_ROI.width ,\
+        //	         	area_ROI.y+area_ROI.height) , colors[6] , FACE_LINE_WIDTH);
         }        
     }
     cv::Mat all = cv::Mat(input , 0);
@@ -232,12 +232,12 @@ void manipulate::MotionProcess::reconstruction(const vector<cv::Mat>& lPyramid ,
 
 
 //unique functions for ColorProcess
-void manipulate::ColorProcess::process_video(cv::Mat & input , cv::Mat& output)
+void manipulate::ColorProcess::process_video(cv::Mat& input , cv::Mat& output)
 {
     bool ifFirst = false;
     if(pyramid.size() == 0)
         ifFirst = true;
-    input.convertTo(input , CV_32FC3 , 1.0f/255.0f);         //change of the data_type
+    input.convertTo(input , CV_32FC3);         //change of the data_type
 
     build_pyramid(input , pyramid);
 
@@ -246,16 +246,43 @@ void manipulate::ColorProcess::process_video(cv::Mat & input , cv::Mat& output)
         filtered = pyramid;
         magnifyMethod->first_frame(pyramid);
         output = input.clone();
+        get_size_pyr(input);
     }
     else
     {
-        output = input.clone();               //if this is necessary?
-        magnifyMethod->temporal_filtering(pyramid.at(1) , filtered.at(1));
-        amplify(filtered.at(1) , filtered.at(1));
+        output = input.clone();     //if this is necessary?
+        magnifyMethod->temporal_filtering(pyramid.at(0) , filtered.at(0));
+        filtered.at(0) = filtered.at(0) * alpha;
+        //amplify(filtered.at(0) , filtered.at(0));
         reconstruction(filtered , output);
+
+        cv::Mat channels[3];
+        cv::split(output , channels);
+        float chromAttenuation = 0.1;
+        channels[1] = channels[1] * chromAttenuation;
+        channels[2] = channels[2] * chromAttenuation;
+        cv::merge(channels , 3 , output);
+
         output += input;
     }
-    output.convertTo(output , CV_8UC3 , 255.0 , 1.0 / 255.0);
+    double minVal, maxVal;
+    minMaxLoc(output, &minVal, &maxVal); //find minimum and maximum intensities
+    output.convertTo(output, CV_8UC3, 255.0/(maxVal - minVal),
+                      -minVal * 255.0/(maxVal - minVal));
+}
+
+void manipulate::ColorProcess::get_size_pyr(const cv::Mat& input)
+{
+    //calculate the size of different level of pyramid
+    sizePyr.clear();
+    cv::Mat source = input , quarter;
+    sizePyr.push_back(input.size());
+    for(int i=0; i<pyramidLevel; i++)
+    {
+        cv::pyrDown(source , quarter);
+        source = quarter;
+        sizePyr.push_back(quarter.size());
+    }
 }
 
 void manipulate::ColorProcess::amplify(const cv::Mat& input , cv::Mat& output)
@@ -282,17 +309,12 @@ void manipulate::ColorProcess::build_pyramid(const cv::Mat& input , vector<cv::M
 void manipulate::ColorProcess::reconstruction(const vector<cv::Mat>& gPyramid , cv::Mat& output)
 {
     //reconstruct the picture from Gaussian pyramid
-    cv::Mat quarter = gPyramid.at(1);
+    cv::Mat quarter = gPyramid.at(0);
     cv::Mat fourfold;
-    CvSize fourSize = gPyramid.at(1).size();
-    fourSize.height *= 2;
-    fourSize.width *= 2;
     for(int i=0; i<pyramidLevel; i++)
     {
-        cv::pyrUp(quarter , fourfold , fourSize);
+        cv::pyrUp(quarter , fourfold , sizePyr.at(pyramidLevel - i - 1));
         quarter = fourfold;
-        fourSize.height *= 2;
-        fourSize.width *= 2;
     }
     output = fourfold.clone();
 }

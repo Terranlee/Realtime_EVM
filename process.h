@@ -34,7 +34,7 @@ namespace manipulate
     const CvRect empty = cvRect(0,0,0,0);
 
     //const for the magnify
-    const float alphaConst = 10.0f;
+    const float alphaConst = 50.0f;
     const float lambdaCConst = 40.0f;
     const float factor = 3.0f;
     const float exaggeration = 2.0f;
@@ -111,14 +111,17 @@ namespace manipulate
     private:
         vector<cv::Mat> pyramid;
         vector<cv::Mat> filtered;
+        vector<CvSize> sizePyr;
 
     protected:
+        void get_size_pyr(const cv::Mat& );
+
         //virtual functions inherited from Process
         virtual void build_pyramid(const cv::Mat& , vector<cv::Mat>& );
         virtual void reconstruction(const vector<cv::Mat> &, cv::Mat &);
         virtual void amplify(const cv::Mat& , cv::Mat&);
     public:
-        ColorProcess(int f = 10) : Process(f) { pyramid.clear() , filtered.clear(); }
+        ColorProcess(int f = 10) : Process(f) { pyramid.clear() , filtered.clear(); sizePyr.clear(); }
 
         //for color magnification , use gaussian_pyramid
         virtual void process_video(cv::Mat& , cv::Mat&);
