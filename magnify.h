@@ -21,6 +21,9 @@ namespace manipulate
     //const about the pyramid
     const int defaultPyramidLevel = 4;
 
+    //const about the ideal filter
+    const int memoryLength = 100;         //100 frames are stored
+
     class Temporal
     {
     protected:
@@ -51,18 +54,34 @@ namespace manipulate
     class IdealTemporal : public Temporal
     {
     private:
+        //about calculating ratio        
+        float tickCount;
+        float sumTime[memoryLength];
         float ratio;
 
+        int widthOne;
+        int heightOne;
+
+        cv::Mat imageList;
+        cv::Mat filteredList;
+
     protected:
+        void calculate_ratio(float);
+
+        void make_image_list(cv::Mat& , int);
+        void add_to_image_list(const cv::Mat&);
         void ideal_bandpassing(cv::Mat&);
+        void calculate_by_list(const cv::Mat& , cv::Mat&);
+        void dft_ideal(const cv::Mat& , cv::Mat&);
 
     public:
-        IdealTemporal(float l = heart_low , float h = heart_high , int pl = defaultPyramidLevel) : Temporal(l , h , pl) {}
-        void set_ratio(float r) { ratio = r; }
+        IdealTemporal(float l = heart_low , float h = heart_high , int pl = defaultPyramidLevel)
+             : Temporal(l , h , pl) { tickCount = 0;  sumTime = 0;  ratio = 0; 
+                                    for(int i=0; i<memoryLength; i++)   sumTime[i] = 0; }
         virtual void first_frame(const vector<cv::Mat>&);
         virtual void temporal_filtering(const cv::Mat& , cv::Mat&);
     };
-
+    
 }
 
 

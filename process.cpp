@@ -271,7 +271,7 @@ void manipulate::ColorProcess::process_video(cv::Mat& input , cv::Mat& output)
     }
     double minVal, maxVal;
     cv::minMaxLoc(output, &minVal, &maxVal); //find minimum and maximum intensities
-    output.convertTo(output, CV_8UC3, 255.0f);
+    output.convertTo(output, CV_8UC3 , 255.0f);
 }
 
 void manipulate::print(const cv::Mat & input)
