@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
+    <width>958</width>
     <height>500</height>
    </rect>
   </property>
@@ -79,13 +79,26 @@
      <string>Stop</string>
     </property>
    </widget>
+   <widget class="QLabel" name="show_area_4">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>30</y>
+      <width>350</width>
+      <height>350</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>550</width>
+     <width>958</width>
      <height>28</height>
     </rect>
    </property>

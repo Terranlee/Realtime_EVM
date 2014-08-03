@@ -11,7 +11,7 @@ material::VideoThread::VideoThread(int frequency , QObject* parent) : QThread(pa
     cvSetCaptureProperty(capture , CV_CAP_PROP_FRAME_WIDTH , videoWidth);
     cvSetCaptureProperty(capture , CV_CAP_PROP_FRAME_HEIGHT , videoHeight);
 
-    process_method = new manipulate::MotionProcess(20);
+    //process_method = new manipulate::MotionProcess(20);
     process_method = new manipulate::ColorProcess(20);
 
     realImage = cvCreateImage(cvSize(videoWidth , videoHeight) , IPL_DEPTH_8U , 3);

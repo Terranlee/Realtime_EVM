@@ -47,5 +47,10 @@ void MainWindow::print()
     IplImage* temp = source->acquire_access();
     QImage image = QImage((const uchar*) temp->imageData , temp->width , temp->height , QImage::Format_RGB888).rgbSwapped();
     ui->show_area->setPixmap(QPixmap::fromImage(image));
+
+    IplImage* temp1 = source->acquire_init();
+    QImage image1 = QImage((const uchar*) temp1->imageData , temp1->width , temp1->height , QImage::Format_RGB888).rgbSwapped();
+    ui->show_area_4->setPixmap(QPixmap::fromImage(image1));
+
 }
 

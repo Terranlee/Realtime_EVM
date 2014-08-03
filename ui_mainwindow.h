@@ -33,6 +33,7 @@ public:
     QLabel *show_area;
     QLabel *if_face;
     QPushButton *Stop;
+    QLabel *show_area_4;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -41,7 +42,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(550, 500);
+        MainWindow->resize(958, 500);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         Set = new QPushButton(centralWidget);
@@ -59,10 +60,13 @@ public:
         Stop = new QPushButton(centralWidget);
         Stop->setObjectName(QStringLiteral("Stop"));
         Stop->setGeometry(QRect(450, 100, 91, 23));
+        show_area_4 = new QLabel(centralWidget);
+        show_area_4->setObjectName(QStringLiteral("show_area_4"));
+        show_area_4->setGeometry(QRect(560, 30, 350, 350));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 550, 28));
+        menuBar->setGeometry(QRect(0, 0, 958, 28));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -84,6 +88,7 @@ public:
         show_area->setText(QString());
         if_face->setText(QApplication::translate("MainWindow", "TextLabel", 0));
         Stop->setText(QApplication::translate("MainWindow", "Stop", 0));
+        show_area_4->setText(QString());
     } // retranslateUi
 
 };

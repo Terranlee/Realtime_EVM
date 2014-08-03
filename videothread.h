@@ -48,6 +48,7 @@ namespace material
         
         void set_time_slice(int frequency){  time_slice = static_cast<int>(1000 / frequency);  }
         IplImage* acquire_access(){ return realImage; }         //access to the IplImage
+        IplImage* acquire_init(){ return frame; }
 
     signals:
         void frame_change();          //new frame is comming

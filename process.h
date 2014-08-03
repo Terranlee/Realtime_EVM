@@ -25,8 +25,8 @@ namespace manipulate
     const int videoWidth = 320;
 
     //const related to the ROIHeight and ROIWidth
-    const int ROIHeight = videoHeight / 2;
-    const int ROIWidth = videoWidth / 2;
+    const int ROIHeight = videoHeight;
+    const int ROIWidth = videoWidth;
 
     //const needed for the face detect
     const int FACE_LINE_WIDTH = 3;
@@ -34,8 +34,8 @@ namespace manipulate
     const CvRect empty = cvRect(0,0,0,0);
 
     //const for the magnify
-    const float alphaConst = 50.0f;
-    const float lambdaCConst = 40.0f;
+    const float alphaConst = 10.0f;
+    const float lambdaCConst = 80.0f;
     const float factor = 3.0f;
     const float exaggeration = 2.0f;
     const float attenuationConst = 0.1;
@@ -53,6 +53,7 @@ namespace manipulate
         int face_frequency;                      //how frequency do we need a face detect
         int pyramidLevel;                        //the highest level of pyramid
         CvRect area_ROI;
+
         manipulate::Temporal* magnifyMethod;    //the temporal filter method and amplify
 
         //functions about the program
@@ -126,6 +127,7 @@ namespace manipulate
         //for color magnification , use gaussian_pyramid
         virtual void process_video(cv::Mat& , cv::Mat&);
     };
+    void print(const cv::Mat&);
 }
 
 #endif // PROCESS_H

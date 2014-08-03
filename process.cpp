@@ -20,7 +20,8 @@ manipulate::Process::Process(int f)
     area_ROI.x = videoWidth / 2 - ROIWidth / 2;
     area_ROI.y = videoHeight / 2 - ROIHeight / 2;
 
-    magnifyMethod = new IIRTemporal(0.8f , 1.0f , pyramidLevel);
+    magnifyMethod = new IIRTemporal(0.8f , 1.5f , pyramidLevel);
+
     set_parameters();
 }
 
@@ -35,7 +36,9 @@ void manipulate::Process::set_parameters(float a , float lc)
 {
 	//set the parameters used for the amplify
 	alpha = a;
+    alpha = 50.0f;
 	lambdaC = lc;
+    lambdaC = 80.0f;
 	calculate_other_param();
 }
 
@@ -99,19 +102,19 @@ void manipulate::Process::area_of_interest(IplImage* input, cv::Mat& ROI)
             CvRect temp = (*(CvRect*)cvGetSeqElem(faces , number));
 
             if(temp.x + ROIWidth >= videoWidth)
-                area_ROI.x = videoWidth - ROIWidth - FACE_LINE_WIDTH;
+                area_ROI.x = videoWidth - ROIWidth;
             else
                 area_ROI.x = temp.x;
 
             if(temp.y + ROIHeight >= videoHeight)
-                area_ROI.y = videoHeight - ROIHeight - FACE_LINE_WIDTH;
+                area_ROI.y = videoHeight - ROIHeight;
             else
                 area_ROI.y = temp.y;
 
             detectAns = true;
      //       cvRectangle(input , cvPoint(area_ROI.x , area_ROI.y) , cvPoint(area_ROI.x+area_ROI.width ,\
         //	         	area_ROI.y+area_ROI.height) , colors[6] , FACE_LINE_WIDTH);
-        }        
+        }
     }
     cv::Mat all = cv::Mat(input , 0);
     ROI = all(area_ROI);
@@ -230,14 +233,13 @@ void manipulate::MotionProcess::reconstruction(const vector<cv::Mat>& lPyramid ,
     output = addTo.clone();
 }
 
-
 //unique functions for ColorProcess
 void manipulate::ColorProcess::process_video(cv::Mat& input , cv::Mat& output)
 {
     bool ifFirst = false;
     if(pyramid.size() == 0)
         ifFirst = true;
-    input.convertTo(input , CV_32FC3);         //change of the data_type
+    input.convertTo(input , CV_32FC3 , 1.0f/255.0f);         //change of the data_type
 
     build_pyramid(input , pyramid);
 
@@ -252,23 +254,34 @@ void manipulate::ColorProcess::process_video(cv::Mat& input , cv::Mat& output)
     {
         output = input.clone();     //if this is necessary?
         magnifyMethod->temporal_filtering(pyramid.at(0) , filtered.at(0));
-        filtered.at(0) = filtered.at(0) * alpha;
-        //amplify(filtered.at(0) , filtered.at(0));
+
+        amplify(filtered.at(0) , filtered.at(0));
         reconstruction(filtered , output);
 
+        /*
+        float chromAttenuation = 0.1;
         cv::Mat channels[3];
         cv::split(output , channels);
-        float chromAttenuation = 0.1;
         channels[1] = channels[1] * chromAttenuation;
         channels[2] = channels[2] * chromAttenuation;
         cv::merge(channels , 3 , output);
+        */
 
         output += input;
     }
     double minVal, maxVal;
-    minMaxLoc(output, &minVal, &maxVal); //find minimum and maximum intensities
-    output.convertTo(output, CV_8UC3, 255.0/(maxVal - minVal),
-                      -minVal * 255.0/(maxVal - minVal));
+    cv::minMaxLoc(output, &minVal, &maxVal); //find minimum and maximum intensities
+    output.convertTo(output, CV_8UC3, 255.0f);
+}
+
+void manipulate::print(const cv::Mat & input)
+{
+    for(int i=0; i<input.rows; i++)
+    {
+        for(int j=0; j<input.cols; j++)
+            std::cout<<input.at<float>(i,j)<<std::endl;
+        std::cout<<std::endl;
+    }
 }
 
 void manipulate::ColorProcess::get_size_pyr(const cv::Mat& input)
